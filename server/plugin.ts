@@ -1,31 +1,8 @@
-import fs from 'node:fs'
-import path from 'node:path'
 import type { IncomingMessage, ServerResponse } from 'node:http'
 
 import type { Connect, Plugin } from 'vite'
 
-import { handleAction, readRoom } from './store.ts'
-import type { RoomView } from '../shared/types.ts'
-
-const shareFile = path.resolve(process.cwd(), 'data/share-url.txt')
-
-function readShareUrl(): string {
-  const candidates = [process.env.PUBLIC_URL ?? '']
-  try {
-    candidates.push(fs.readFileSync(shareFile, 'utf8'))
-  } catch {
-    // The public link appears once sharing is started.
-  }
-  for (const candidate of candidates) {
-    const value = candidate.trim()
-    if (/^https?:\/\//i.test(value)) return value
-  }
-  return ''
-}
-
-async function view(): Promise<RoomView> {
-  return { ...(await readRoom()), shareUrl: readShareUrl() }
-}
+import { respondToRoom } from './respond.ts'
 
 function sendJson(res: ServerResponse, status: number, body: unknown) {
   res.statusCode = status
@@ -54,19 +31,13 @@ function readBody(req: IncomingMessage): Promise<string> {
 
 async function handle(req: IncomingMessage, res: ServerResponse) {
   try {
-    if (req.method === 'GET') {
-      sendJson(res, 200, await view())
-      return
-    }
-    if (req.method !== 'POST') {
-      sendJson(res, 405, { error: 'Методът не е позволен' })
-      return
-    }
-    const raw = await readBody(req)
     let action: unknown = {}
-    if (raw) action = JSON.parse(raw) as unknown
-    await handleAction(action)
-    sendJson(res, 200, await view())
+    if (req.method === 'POST') {
+      const raw = await readBody(req)
+      if (raw) action = JSON.parse(raw) as unknown
+    }
+    const result = await respondToRoom(req.method, action)
+    sendJson(res, result.status, result.body)
   } catch (err) {
     const message =
       err instanceof SyntaxError
@@ -74,8 +45,7 @@ async function handle(req: IncomingMessage, res: ServerResponse) {
         : err instanceof Error
           ? err.message
           : 'Нещо се обърка'
-    const status = message === 'Гласът е заключен' ? 409 : 400
-    if (!res.headersSent) sendJson(res, status, { error: message })
+    if (!res.headersSent) sendJson(res, 400, { error: message })
   }
 }
 
