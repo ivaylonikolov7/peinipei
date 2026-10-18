@@ -20,7 +20,7 @@ const endpoint = process.env.DYNAMODB_ENDPOINT ?? 'http://127.0.0.1:8000'
 const local = endpoint !== 'aws'
 
 const client = new DynamoDBClient({
-  region: process.env.AWS_REGION ?? 'eu-central-1',
+  region: process.env.AWS_REGION ?? 'eu-north-1',
   maxAttempts: 2,
   ...(local
     ? {
