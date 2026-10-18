@@ -211,6 +211,10 @@ function Game({
     })
   }, [room])
 
+  const leaderboard = useMemo(() => {
+    return ranked.slice().sort((a, b) => b.correct - a.correct || a.player.joinedAt - b.player.joinedAt)
+  }, [ranked])
+
   function mySide(contestant: Contestant): Side | null {
     const server = me ? voteOf(me.votes, contestant) : null
     if (!(contestant in optimistic)) return server
@@ -470,6 +474,31 @@ function Game({
           )}
         </aside>
       </div>
+
+      <section className="panel leaderboard" aria-label="Класация">
+        <h2>Класация</h2>
+        {leaderboard.length === 0 ? (
+          <p className="quiet">Още няма никой.</p>
+        ) : (
+          <>
+            {!leaderboard.some((row) => row.judged > 0) && (
+              <p className="quiet">Познатите се броят, когато има истина за номерата.</p>
+            )}
+            <ol>
+              {leaderboard.map((row) => (
+                <li key={row.player.id} className={row.player.id === session.id ? 'board-row mine' : 'board-row'}>
+                  <span className="place">{row.judged > 0 ? row.rank : '·'}</span>
+                  <span className="dot" style={{ background: colorFor(row.player.id) }} />
+                  <strong>{row.player.name}</strong>
+                  <b>
+                    {row.correct} <small>позна</small>
+                  </b>
+                </li>
+              ))}
+            </ol>
+          </>
+        )}
+      </section>
 
       {dialog && (
         <div className="modal-back" role="presentation" onClick={() => setDialog(null)}>
