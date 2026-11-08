@@ -98,7 +98,7 @@ function JoinScreen({
   const [localError, setLocalError] = useState<string | null>(null)
 
   async function choose(name: (typeof FAMILY)[number]) {
-    if (pendingName || taken.has(name)) return
+    if (pendingName) return
     setPendingName(name)
     setLocalError(null)
     try {
@@ -129,11 +129,11 @@ function JoinScreen({
                 key={name}
                 type="button"
                 className="seat"
-                disabled={busy || pendingName !== null || status !== 'live'}
+                disabled={pendingName !== null || status !== 'live'}
                 onClick={() => void choose(name)}
               >
                 <span>{name}</span>
-                <small>{pendingName === name ? 'влизам…' : busy ? 'заето' : 'свободно'}</small>
+                <small>{pendingName === name ? 'влизам…' : busy ? 'влез пак' : 'свободно'}</small>
               </button>
             )
           })}

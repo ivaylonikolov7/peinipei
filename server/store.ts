@@ -137,7 +137,12 @@ function apply(draft: Room, action: unknown) {
         existing.lastSeen = Date.now()
         return
       }
-      if (draft.players.some((item) => item.name === name)) throw new Error(`${name} вече е вътре`)
+      const sameName = draft.players.find((item) => item.name === name)
+      if (sameName) {
+        sameName.id = body.id
+        sameName.lastSeen = Date.now()
+        return
+      }
       if (draft.players.length >= MAX_PLAYERS) throw new Error('Масата е пълна')
       const now = Date.now()
       draft.players.push({
