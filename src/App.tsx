@@ -115,9 +115,9 @@ function JoinScreen({
       <div className="join-card">
         <p className="kicker">семейно гласуване</p>
         <h1>
-          Пееш <span>или</span>
+          Пей <span>ни</span>
           <br />
-          лъжеш
+          пей
         </h1>
         <p className="lede">Осем номера. Избери си мястото.</p>
         <p className="seat-label">Кой си?</p>
@@ -281,7 +281,7 @@ function Game({
       <header className="top">
         <div>
           <p className="kicker">семейно гласуване</p>
-          <h1>Пееш или лъжеш</h1>
+          <h1>Пей ни пей</h1>
         </div>
         <div className="top-actions">
           <span className={status === 'live' ? 'live' : 'live down'}>
@@ -402,7 +402,7 @@ function Game({
                       return (
                         <span key={n} className={`mark ${tone}${judged}`}>
                           <i>{n}</i>
-                          {vote === 'sing' ? 'П' : vote === 'lie' ? 'Л' : '·'}
+                          {vote === 'sing' ? 'П' : vote === 'lie' ? 'Н' : '·'}
                         </span>
                       )
                     })}
@@ -411,8 +411,8 @@ function Game({
               ))}
             </div>
             <p className="legend">
-              <span className="swatch sing">П</span> пее
-              <span className="swatch lie">Л</span> лъже
+              <span className="swatch sing">П</span> пей
+              <span className="swatch lie">Н</span> ни пей
               {ranked.some((row) => row.judged > 0) && ' · пръстенът значи позна'}
             </p>
           </section>
@@ -443,7 +443,7 @@ function Game({
                               aria-pressed={revealed === 'sing'}
                               onClick={() => void setTruth(n, 'sing')}
                             >
-                              Пее
+                              Пей
                             </button>
                             <button
                               type="button"
@@ -451,12 +451,12 @@ function Game({
                               aria-pressed={revealed === 'lie'}
                               onClick={() => void setTruth(n, 'lie')}
                             >
-                              Лъже
+                              Ни пей
                             </button>
                           </>
                         ) : (
                           <span className="revealed">
-                            {revealed === 'sing' ? 'пее' : revealed === 'lie' ? 'лъже' : 'още няма'}
+                            {revealed === 'sing' ? 'пей' : revealed === 'lie' ? 'ни пей' : 'още няма'}
                           </span>
                         )}
                       </div>
@@ -570,8 +570,8 @@ function VoteCard({
     ? null
     : !mine
       ? truth === 'sing'
-        ? 'пее'
-        : 'лъже'
+        ? 'пей'
+        : 'ни пей'
       : mine === truth
         ? 'позна'
         : 'грешка'
@@ -596,21 +596,21 @@ function VoteCard({
           type="button"
           className={mine === 'sing' ? 'choice sing on' : 'choice sing'}
           aria-pressed={mine === 'sing'}
-          aria-label={`Номер ${contestant} пее`}
+          aria-label={`Номер ${contestant} пей`}
           disabled={locked}
           onClick={() => onVote('sing')}
         >
-          Пее
+          Пей
         </button>
         <button
           type="button"
           className={mine === 'lie' ? 'choice lie on' : 'choice lie'}
           aria-pressed={mine === 'lie'}
-          aria-label={`Номер ${contestant} лъже`}
+          aria-label={`Номер ${contestant} ни пей`}
           disabled={locked}
           onClick={() => onVote('lie')}
         >
-          Лъже
+          Ни пей
         </button>
       </div>
       <p className="who">
@@ -666,7 +666,7 @@ function ShareBar({ link, players, privateHost = false }: { link: string; player
 async function shareLink(link: string): Promise<'shared' | 'copied' | 'cancel' | 'failed'> {
   if (navigator.share) {
     try {
-      await navigator.share({ title: 'Пееш или лъжеш', text: 'Влез да гласуваш за номерата.', url: link })
+      await navigator.share({ title: 'Пей ни пей', text: 'Влез да гласуваш за номерата.', url: link })
       return 'shared'
     } catch {
       return 'cancel'

@@ -114,7 +114,7 @@ function asContestant(value: unknown): Contestant {
 function asSide(value: unknown): Side | null {
   if (value === null) return null
   if (value === 'sing' || value === 'lie') return value
-  throw new Error('Гласът трябва да е пее или лъже')
+  throw new Error('Гласът трябва да е пей или ни пей')
 }
 
 function findPlayer(draft: Room, id: unknown): Player {
@@ -165,7 +165,7 @@ function apply(draft: Room, action: unknown) {
       const side = asSide(body.side)
       const voteKey = keyOf(contestant)
       if (player.votes[voteKey]) throw new Error('Този номер е заключен')
-      if (!side) throw new Error('Избери пее или лъже')
+      if (!side) throw new Error('Избери пей или ни пей')
       player.voteRev = rev
       player.votes[voteKey] = side
       player.lastSeen = Date.now()

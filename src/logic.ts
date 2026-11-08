@@ -24,7 +24,7 @@ export function scoreOf(player: Player, truth: Partial<Record<ContestantKey, Sid
 }
 
 export function sideLabel(side: Side, count: number): string {
-  return `${count} за ${side === 'sing' ? 'пее' : 'лъже'}`
+  return `${count} за ${side === 'sing' ? 'пей' : 'ни пей'}`
 }
 
 export function tally(players: Player[], contestant: Contestant) {
